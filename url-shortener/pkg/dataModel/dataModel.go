@@ -1,6 +1,8 @@
 package dataModel
 
 import (
+	"log"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -28,6 +30,7 @@ type DataAccessLayer interface {
 	CreateUser(user *User) error
 	GetUserByEmail(email string) (*User, error)
 	CheckAPIKey(apiKey string) (bool, error)
+	AutoMigrate(dst ...interface{}) error
 }
 
 // DB represents the database connection.
@@ -48,7 +51,7 @@ func (db *DB) CreateURLMapping(mapping *URLMapping) error {
 // GetLongURL retrieves the long URL for a given short URL ID.
 func (db *DB) GetLongURL(shortURLID string) (string, error) {
 	var mapping URLMapping
-	err := db.Where("short_url_id = ?", shortURLID).First(&mapping).Error
+	err := db.Where(&URLMapping{ShortURLID: shortURLID}).First(&mapping).Error
 	if err != nil {
 		return "", err
 	}
@@ -63,7 +66,7 @@ func (db *DB) CreateUser(user *User) error {
 // GetUserByEmail retrieves a user from the database by email.
 func (db *DB) GetUserByEmail(email string) (*User, error) {
 	var user User
-	err := db.Where("email = ?", email).First(&user).Error
+	err := db.Where(&User{Email: email}).First(&user).Error
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +76,12 @@ func (db *DB) GetUserByEmail(email string) (*User, error) {
 // CheckAPIKey checks if an API key exists in the database.
 func (db *DB) CheckAPIKey(apiKey string) (bool, error) {
 	var user User
-	err := db.Where("api_key = ?", apiKey).First(&user).Error
+	api , err := uuid.Parse(apiKey)
+	if err != nil {
+		log.Printf("api key invalid")
+		return false, err
+	}
+	err = db.Where(&User{APIKey: api}).First(&user).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return false, nil
@@ -81,4 +89,8 @@ func (db *DB) CheckAPIKey(apiKey string) (bool, error) {
 		return false, err
 	}
 	return true, nil
+}
+
+func (db *DB) AutoMigrate(dst ...interface{}) error {
+	return db.DB.AutoMigrate(dst...)
 }

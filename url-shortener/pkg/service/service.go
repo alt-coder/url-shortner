@@ -81,10 +81,11 @@ func NewServer() (*UrlShortenerService, error) {
 		log.Printf("Error connecting to Zookeeper: %v", err)
 		return nil, err
 	}
+	datamodelDB := dataModel.NewDB(db)
 
 	return &UrlShortenerService{
 		Config:            cfg,
-		PostgresClient:    db,
+		db:    datamodelDB,
 		RedisClient:       redisClient,
 		ZookeeperClient:   zkClient,
 		currentCounterVal: 0,
@@ -107,7 +108,7 @@ func (s *UrlShortenerService) GetURL(ctx context.Context, req *proto.GetURLReque
 
 func (s *UrlShortenerService) Start() error {
 	// Auto migrate the database tables
-	err := s.PostgresClient.AutoMigrate(&dataModel.URLMapping{}, &dataModel.User{})
+	err := s.db.AutoMigrate(&dataModel.URLMapping{}, &dataModel.User{})
 	if err != nil {
 		log.Fatalf("failed to automigrate: %v", err)
 		return err

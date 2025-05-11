@@ -25,6 +25,7 @@ const (
 type ShortenURLRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	LongUrl       string                 `protobuf:"bytes,1,opt,name=long_url,json=longUrl,proto3" json:"long_url,omitempty"`
+	ApiKey        string                 `protobuf:"bytes,2,opt,name=api_key,json=apiKey,proto3" json:"api_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -62,6 +63,13 @@ func (*ShortenURLRequest) Descriptor() ([]byte, []int) {
 func (x *ShortenURLRequest) GetLongUrl() string {
 	if x != nil {
 		return x.LongUrl
+	}
+	return ""
+}
+
+func (x *ShortenURLRequest) GetApiKey() string {
+	if x != nil {
+		return x.ApiKey
 	}
 	return ""
 }
@@ -202,9 +210,10 @@ var File_url_shortener_proto protoreflect.FileDescriptor
 
 const file_url_shortener_proto_rawDesc = "" +
 	"\n" +
-	"\x13url_shortener.proto\x12\rurl_shortener\x1a\x1cgoogle/api/annotations.proto\".\n" +
+	"\x13url_shortener.proto\x12\rurl_shortener\x1a\x1cgoogle/api/annotations.proto\"G\n" +
 	"\x11ShortenURLRequest\x12\x19\n" +
-	"\blong_url\x18\x01 \x01(\tR\alongUrl\"1\n" +
+	"\blong_url\x18\x01 \x01(\tR\alongUrl\x12\x17\n" +
+	"\aapi_key\x18\x02 \x01(\tR\x06apiKey\"1\n" +
 	"\x12ShortenURLResponse\x12\x1b\n" +
 	"\tshort_url\x18\x01 \x01(\tR\bshortUrl\",\n" +
 	"\rGetURLRequest\x12\x1b\n" +

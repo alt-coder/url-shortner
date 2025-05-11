@@ -1,14 +1,12 @@
 package service
 
 import (
-	proto "github.com/alt-coder/url-shortener/url-shortener/proto"
-)
-
-import (
-	"gorm.io/gorm"
-	"github.com/redis/go-redis/v9"
-	"github.com/go-zookeeper/zk"
 	"sync"
+
+	"github.com/alt-coder/url-shortener/url-shortener/pkg/dataModel"
+	proto "github.com/alt-coder/url-shortener/url-shortener/proto"
+	"github.com/go-zookeeper/zk"
+	"github.com/redis/go-redis/v9"
 )
 
 type Config struct {
@@ -28,11 +26,11 @@ type Config struct {
 type UrlShortenerService struct {
 	proto.UnimplementedURLShortenerServer
 	Config Config
-	PostgresClient *gorm.DB
 	RedisClient *redis.Client
 	ZookeeperClient *zk.Conn
 	currentCounterVal int64
 	uppLimitVal int64
 	mu sync.Mutex
 	isCounterExists bool
+	db dataModel.DataAccessLayer
 }

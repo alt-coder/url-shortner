@@ -22,6 +22,7 @@ service URLShortener {
 
 message ShortenURLRequest {
   string long_url = 1;
+  string api_key = 2; 
 }
 
 message ShortenURLResponse {
