@@ -30,4 +30,6 @@ type UrlShortenerService struct {
 	PostgresClient *gorm.DB
 	RedisClient *redis.Client
 	ZookeeperClient *zk.Conn
+	currentCounterVal int64
+	uppLimitVal int64
 }

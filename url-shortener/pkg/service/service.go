@@ -10,6 +10,7 @@ import (
 	"time"
 
 	base "github.com/alt-coder/url-shortener/base/go"
+	"github.com/alt-coder/url-shortener/url-shortener/pkg/dataModel"
 	proto "github.com/alt-coder/url-shortener/url-shortener/proto"
 
 	"github.com/gorilla/mux"
@@ -103,6 +104,12 @@ func (s *UrlShortenerService) GetURL(ctx context.Context, req *proto.GetURLReque
 }
 
 func (s *UrlShortenerService) Start() error {
+	// Auto migrate the database tables
+	err := s.PostgresClient.AutoMigrate(&dataModel.URLMapping{}, &dataModel.User{})
+	if err != nil {
+		log.Fatalf("failed to automigrate: %v", err)
+		return err
+	}
 	// Create a listener on TCP port 50051
 	lis, err := net.Listen("tcp", ":"+s.Config.GrpcPort)
 	if err != nil {
