@@ -206,6 +206,206 @@ func (x *GetURLResponse) GetLongUrl() string {
 	return ""
 }
 
+type CreateUserRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FirstName     string                 `protobuf:"bytes,1,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName      string                 `protobuf:"bytes,2,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateUserRequest) Reset() {
+	*x = CreateUserRequest{}
+	mi := &file_url_shortener_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateUserRequest) ProtoMessage() {}
+
+func (x *CreateUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_url_shortener_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateUserRequest.ProtoReflect.Descriptor instead.
+func (*CreateUserRequest) Descriptor() ([]byte, []int) {
+	return file_url_shortener_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CreateUserRequest) GetFirstName() string {
+	if x != nil {
+		return x.FirstName
+	}
+	return ""
+}
+
+func (x *CreateUserRequest) GetLastName() string {
+	if x != nil {
+		return x.LastName
+	}
+	return ""
+}
+
+func (x *CreateUserRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+type CreateUserResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ApiKey        string                 `protobuf:"bytes,2,opt,name=api_key,json=apiKey,proto3" json:"api_key,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateUserResponse) Reset() {
+	*x = CreateUserResponse{}
+	mi := &file_url_shortener_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateUserResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateUserResponse) ProtoMessage() {}
+
+func (x *CreateUserResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_url_shortener_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateUserResponse.ProtoReflect.Descriptor instead.
+func (*CreateUserResponse) Descriptor() ([]byte, []int) {
+	return file_url_shortener_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *CreateUserResponse) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *CreateUserResponse) GetApiKey() string {
+	if x != nil {
+		return x.ApiKey
+	}
+	return ""
+}
+
+type FetchApiKeyRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FetchApiKeyRequest) Reset() {
+	*x = FetchApiKeyRequest{}
+	mi := &file_url_shortener_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FetchApiKeyRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FetchApiKeyRequest) ProtoMessage() {}
+
+func (x *FetchApiKeyRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_url_shortener_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FetchApiKeyRequest.ProtoReflect.Descriptor instead.
+func (*FetchApiKeyRequest) Descriptor() ([]byte, []int) {
+	return file_url_shortener_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *FetchApiKeyRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+type FetchApiKeyResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ApiKey        string                 `protobuf:"bytes,1,opt,name=api_key,json=apiKey,proto3" json:"api_key,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FetchApiKeyResponse) Reset() {
+	*x = FetchApiKeyResponse{}
+	mi := &file_url_shortener_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FetchApiKeyResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FetchApiKeyResponse) ProtoMessage() {}
+
+func (x *FetchApiKeyResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_url_shortener_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FetchApiKeyResponse.ProtoReflect.Descriptor instead.
+func (*FetchApiKeyResponse) Descriptor() ([]byte, []int) {
+	return file_url_shortener_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *FetchApiKeyResponse) GetApiKey() string {
+	if x != nil {
+		return x.ApiKey
+	}
+	return ""
+}
+
 var File_url_shortener_proto protoreflect.FileDescriptor
 
 const file_url_shortener_proto_rawDesc = "" +
@@ -219,11 +419,26 @@ const file_url_shortener_proto_rawDesc = "" +
 	"\rGetURLRequest\x12\x1b\n" +
 	"\tshort_url\x18\x01 \x01(\tR\bshortUrl\"+\n" +
 	"\x0eGetURLResponse\x12\x19\n" +
-	"\blong_url\x18\x01 \x01(\tR\alongUrl2\xd3\x01\n" +
+	"\blong_url\x18\x01 \x01(\tR\alongUrl\"e\n" +
+	"\x11CreateUserRequest\x12\x1d\n" +
+	"\n" +
+	"first_name\x18\x01 \x01(\tR\tfirstName\x12\x1b\n" +
+	"\tlast_name\x18\x02 \x01(\tR\blastName\x12\x14\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email\"F\n" +
+	"\x12CreateUserResponse\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
+	"\aapi_key\x18\x02 \x01(\tR\x06apiKey\"*\n" +
+	"\x12FetchApiKeyRequest\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\".\n" +
+	"\x13FetchApiKeyResponse\x12\x17\n" +
+	"\aapi_key\x18\x01 \x01(\tR\x06apiKey2\xa9\x03\n" +
 	"\fURLShortener\x12f\n" +
 	"\n" +
 	"ShortenURL\x12 .url_shortener.ShortenURLRequest\x1a!.url_shortener.ShortenURLResponse\"\x13\x82\xd3\xe4\x93\x02\r:\x01*\"\b/shorten\x12[\n" +
-	"\x06GetURL\x12\x1c.url_shortener.GetURLRequest\x1a\x1d.url_shortener.GetURLResponse\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/{short_url}B7Z5github.com/alt-coder/url-shortner/url-shortener/protob\x06proto3"
+	"\x06GetURL\x12\x1c.url_shortener.GetURLRequest\x1a\x1d.url_shortener.GetURLResponse\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/{short_url}\x12d\n" +
+	"\n" +
+	"CreateUser\x12 .url_shortener.CreateUserRequest\x1a!.url_shortener.CreateUserResponse\"\x11\x82\xd3\xe4\x93\x02\v:\x01*\"\x06/users\x12n\n" +
+	"\vFetchApiKey\x12!.url_shortener.FetchApiKeyRequest\x1a\".url_shortener.FetchApiKeyResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/api_key/{email}B7Z5github.com/alt-coder/url-shortner/url-shortener/protob\x06proto3"
 
 var (
 	file_url_shortener_proto_rawDescOnce sync.Once
@@ -237,20 +452,28 @@ func file_url_shortener_proto_rawDescGZIP() []byte {
 	return file_url_shortener_proto_rawDescData
 }
 
-var file_url_shortener_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_url_shortener_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_url_shortener_proto_goTypes = []any{
-	(*ShortenURLRequest)(nil),  // 0: url_shortener.ShortenURLRequest
-	(*ShortenURLResponse)(nil), // 1: url_shortener.ShortenURLResponse
-	(*GetURLRequest)(nil),      // 2: url_shortener.GetURLRequest
-	(*GetURLResponse)(nil),     // 3: url_shortener.GetURLResponse
+	(*ShortenURLRequest)(nil),   // 0: url_shortener.ShortenURLRequest
+	(*ShortenURLResponse)(nil),  // 1: url_shortener.ShortenURLResponse
+	(*GetURLRequest)(nil),       // 2: url_shortener.GetURLRequest
+	(*GetURLResponse)(nil),      // 3: url_shortener.GetURLResponse
+	(*CreateUserRequest)(nil),   // 4: url_shortener.CreateUserRequest
+	(*CreateUserResponse)(nil),  // 5: url_shortener.CreateUserResponse
+	(*FetchApiKeyRequest)(nil),  // 6: url_shortener.FetchApiKeyRequest
+	(*FetchApiKeyResponse)(nil), // 7: url_shortener.FetchApiKeyResponse
 }
 var file_url_shortener_proto_depIdxs = []int32{
 	0, // 0: url_shortener.URLShortener.ShortenURL:input_type -> url_shortener.ShortenURLRequest
 	2, // 1: url_shortener.URLShortener.GetURL:input_type -> url_shortener.GetURLRequest
-	1, // 2: url_shortener.URLShortener.ShortenURL:output_type -> url_shortener.ShortenURLResponse
-	3, // 3: url_shortener.URLShortener.GetURL:output_type -> url_shortener.GetURLResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	4, // 2: url_shortener.URLShortener.CreateUser:input_type -> url_shortener.CreateUserRequest
+	6, // 3: url_shortener.URLShortener.FetchApiKey:input_type -> url_shortener.FetchApiKeyRequest
+	1, // 4: url_shortener.URLShortener.ShortenURL:output_type -> url_shortener.ShortenURLResponse
+	3, // 5: url_shortener.URLShortener.GetURL:output_type -> url_shortener.GetURLResponse
+	5, // 6: url_shortener.URLShortener.CreateUser:output_type -> url_shortener.CreateUserResponse
+	7, // 7: url_shortener.URLShortener.FetchApiKey:output_type -> url_shortener.FetchApiKeyResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -267,7 +490,7 @@ func file_url_shortener_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_url_shortener_proto_rawDesc), len(file_url_shortener_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

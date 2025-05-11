@@ -18,11 +18,22 @@ service URLShortener {
       get: "/{short_url}"
     };
   }
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post: "/users"
+      body: "*"
+    };
+  }
+  rpc FetchApiKey (FetchApiKeyRequest) returns (FetchApiKeyResponse) {
+    option (google.api.http) = {
+      get: "/api_key/{email}"
+    };
+  }
 }
 
 message ShortenURLRequest {
   string long_url = 1;
-  string api_key = 2; 
+  string api_key = 2;
 }
 
 message ShortenURLResponse {
@@ -35,4 +46,23 @@ message GetURLRequest {
 
 message GetURLResponse {
   string long_url = 1;
+}
+
+message CreateUserRequest {
+  string first_name = 1;
+  string last_name = 2;
+  string email = 3;
+}
+
+message CreateUserResponse {
+  string user_id = 1;
+  string api_key = 2;
+}
+
+message FetchApiKeyRequest {
+  string email = 1;
+}
+
+message FetchApiKeyResponse {
+  string api_key = 1;
 }

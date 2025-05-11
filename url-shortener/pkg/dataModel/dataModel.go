@@ -17,9 +17,9 @@ type URLMapping struct {
 // User represents a user in the system.
 type User struct {
 	gorm.Model
-	Email     string `gorm:"uniqueIndex"`
-	FirstName string
-	LastName  string
+	Email     string    `gorm:"uniqueIndex;not null"`
+	FirstName string    `gorm:"not null"`
+	LastName  string    `gorm:"not null"`
 	APIKey    uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
 }
 
@@ -29,6 +29,7 @@ type DataAccessLayer interface {
 	GetLongURL(shortURLID string) (string, error)
 	CreateUser(user *User) error
 	GetUserByEmail(email string) (*User, error)
+	GetAPIKeyByEmail(email string) (string, error)
 	CheckAPIKey(apiKey string) (bool, error)
 	AutoMigrate(dst ...interface{}) error
 }
@@ -73,10 +74,20 @@ func (db *DB) GetUserByEmail(email string) (*User, error) {
 	return &user, nil
 }
 
+// GetAPIKeyByEmail retrieves the API key for a given email.
+func (db *DB) GetAPIKeyByEmail(email string) (string, error) {
+	var user User
+	err := db.Where(&User{Email: email}).First(&user).Error
+	if err != nil {
+		return "", err
+	}
+	return user.APIKey.String(), nil
+}
+
 // CheckAPIKey checks if an API key exists in the database.
 func (db *DB) CheckAPIKey(apiKey string) (bool, error) {
 	var user User
-	api , err := uuid.Parse(apiKey)
+	api, err := uuid.Parse(apiKey)
 	if err != nil {
 		log.Printf("api key invalid")
 		return false, err

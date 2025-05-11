@@ -19,8 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	URLShortener_ShortenURL_FullMethodName = "/url_shortener.URLShortener/ShortenURL"
-	URLShortener_GetURL_FullMethodName     = "/url_shortener.URLShortener/GetURL"
+	URLShortener_ShortenURL_FullMethodName  = "/url_shortener.URLShortener/ShortenURL"
+	URLShortener_GetURL_FullMethodName      = "/url_shortener.URLShortener/GetURL"
+	URLShortener_CreateUser_FullMethodName  = "/url_shortener.URLShortener/CreateUser"
+	URLShortener_FetchApiKey_FullMethodName = "/url_shortener.URLShortener/FetchApiKey"
 )
 
 // URLShortenerClient is the client API for URLShortener service.
@@ -29,6 +31,8 @@ const (
 type URLShortenerClient interface {
 	ShortenURL(ctx context.Context, in *ShortenURLRequest, opts ...grpc.CallOption) (*ShortenURLResponse, error)
 	GetURL(ctx context.Context, in *GetURLRequest, opts ...grpc.CallOption) (*GetURLResponse, error)
+	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
+	FetchApiKey(ctx context.Context, in *FetchApiKeyRequest, opts ...grpc.CallOption) (*FetchApiKeyResponse, error)
 }
 
 type uRLShortenerClient struct {
@@ -59,12 +63,34 @@ func (c *uRLShortenerClient) GetURL(ctx context.Context, in *GetURLRequest, opts
 	return out, nil
 }
 
+func (c *uRLShortenerClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateUserResponse)
+	err := c.cc.Invoke(ctx, URLShortener_CreateUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *uRLShortenerClient) FetchApiKey(ctx context.Context, in *FetchApiKeyRequest, opts ...grpc.CallOption) (*FetchApiKeyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(FetchApiKeyResponse)
+	err := c.cc.Invoke(ctx, URLShortener_FetchApiKey_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // URLShortenerServer is the server API for URLShortener service.
 // All implementations must embed UnimplementedURLShortenerServer
 // for forward compatibility.
 type URLShortenerServer interface {
 	ShortenURL(context.Context, *ShortenURLRequest) (*ShortenURLResponse, error)
 	GetURL(context.Context, *GetURLRequest) (*GetURLResponse, error)
+	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
+	FetchApiKey(context.Context, *FetchApiKeyRequest) (*FetchApiKeyResponse, error)
 	mustEmbedUnimplementedURLShortenerServer()
 }
 
@@ -80,6 +106,12 @@ func (UnimplementedURLShortenerServer) ShortenURL(context.Context, *ShortenURLRe
 }
 func (UnimplementedURLShortenerServer) GetURL(context.Context, *GetURLRequest) (*GetURLResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetURL not implemented")
+}
+func (UnimplementedURLShortenerServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+}
+func (UnimplementedURLShortenerServer) FetchApiKey(context.Context, *FetchApiKeyRequest) (*FetchApiKeyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FetchApiKey not implemented")
 }
 func (UnimplementedURLShortenerServer) mustEmbedUnimplementedURLShortenerServer() {}
 func (UnimplementedURLShortenerServer) testEmbeddedByValue()                      {}
@@ -138,6 +170,42 @@ func _URLShortener_GetURL_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _URLShortener_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(URLShortenerServer).CreateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: URLShortener_CreateUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(URLShortenerServer).CreateUser(ctx, req.(*CreateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _URLShortener_FetchApiKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FetchApiKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(URLShortenerServer).FetchApiKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: URLShortener_FetchApiKey_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(URLShortenerServer).FetchApiKey(ctx, req.(*FetchApiKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // URLShortener_ServiceDesc is the grpc.ServiceDesc for URLShortener service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +220,14 @@ var URLShortener_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetURL",
 			Handler:    _URLShortener_GetURL_Handler,
+		},
+		{
+			MethodName: "CreateUser",
+			Handler:    _URLShortener_CreateUser_Handler,
+		},
+		{
+			MethodName: "FetchApiKey",
+			Handler:    _URLShortener_FetchApiKey_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

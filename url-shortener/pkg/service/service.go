@@ -120,7 +120,7 @@ func (s *UrlShortenerService) ShortenURL(ctx context.Context, req *proto.Shorten
 
 	urlMapping := &dataModel.URLMapping{
 		ShortURLID: shortURL,
-		LongURL:  originalURL,
+		LongURL:    originalURL,
 	}
 
 	if err := s.db.CreateURLMapping(urlMapping); err != nil {
@@ -139,6 +139,34 @@ func (s *UrlShortenerService) GetURL(ctx context.Context, req *proto.GetURLReque
 	}
 
 	return &proto.GetURLResponse{LongUrl: longURL}, nil
+}
+
+func (s *UrlShortenerService) CreateUser(ctx context.Context, req *proto.CreateUserRequest) (*proto.CreateUserResponse, error) {
+	user := &dataModel.User{
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+		Email:     req.Email,
+	}
+
+	if err := s.db.CreateUser(user); err != nil {
+		return nil, err
+	}
+
+	return &proto.CreateUserResponse{
+		UserId: strconv.FormatUint(uint64(user.ID), 10),
+		ApiKey: user.APIKey.String(),
+	}, nil
+
+}
+func (s *UrlShortenerService) FetchApiKey(ctx context.Context, req *proto.FetchApiKeyRequest) (*proto.FetchApiKeyResponse, error) {
+	apiKey, err := s.db.GetAPIKeyByEmail(req.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.FetchApiKeyResponse{
+		ApiKey: apiKey,
+	}, nil
 }
 
 func (s *UrlShortenerService) Start() error {
