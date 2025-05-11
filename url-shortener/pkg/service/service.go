@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 
 	proto "github.com/alt-coder/url-shortener/url-shortener/proto"
 	"google.golang.org/grpc"
@@ -15,7 +16,27 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 )
 
-func NewServer(cfg Config) *UrlShortenerService {
+func NewServer() *UrlShortenerService {
+	cfg := Config{
+		GrpcPort:         os.Getenv(GrpcPort),
+		HttpPort:         os.Getenv(HttpPort),
+		PostgresHost:     os.Getenv(PostgresHost),
+		PostgresPort:     os.Getenv(PostgresPort),
+		PostgresUser:     os.Getenv(PostgresUser),
+		PostgresPassword: os.Getenv(PostgresPassword),
+		PostgresDBName:   os.Getenv(PostgresDBName),
+		RedisHost:        os.Getenv(RedisHost),
+		RedisPort:        os.Getenv(RedisPort),
+		ZookeeperHost:    os.Getenv(ZookeeperHost),
+		ZookeeperPort:    os.Getenv(ZookeeperPort),
+	}
+
+	// Initialize PostgreSQL, Redis, and ZooKeeper connections
+	// TODO: Implement actual initialization logic
+	log.Printf("Connecting to PostgreSQL: %s:%s@%s/%s", cfg.PostgresUser, cfg.PostgresPassword, cfg.PostgresHost, cfg.PostgresDBName)
+	log.Printf("Connecting to Redis: %s:%s", cfg.RedisHost, cfg.RedisPort)
+	log.Printf("Connecting to ZooKeeper: %s:%s", cfg.ZookeeperHost, cfg.ZookeeperPort)
+
 	return &UrlShortenerService{
 		Config: cfg,
 	}
@@ -81,7 +102,7 @@ func (s *UrlShortenerService) Start() error {
 	gwmux := runtime.NewServeMux()
 	err = proto.RegisterURLShortenerHandler(context.Background(), gwmux, conn)
 	if err != nil {
-		log.Fatal("Failed to register gateway:", err)
+		log.Fatalf("Failed to register gateway:", err)
 		return err
 	}
 
