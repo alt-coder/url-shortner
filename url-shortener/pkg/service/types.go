@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 	"github.com/redis/go-redis/v9"
 	"github.com/go-zookeeper/zk"
+	"sync"
 )
 
 type Config struct {
@@ -32,4 +33,6 @@ type UrlShortenerService struct {
 	ZookeeperClient *zk.Conn
 	currentCounterVal int64
 	uppLimitVal int64
+	mu sync.Mutex
+	isCounterExists bool
 }

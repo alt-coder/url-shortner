@@ -83,10 +83,12 @@ func NewServer() (*UrlShortenerService, error) {
 	}
 
 	return &UrlShortenerService{
-		Config:          cfg,
-		PostgresClient:  db,
-		RedisClient:     redisClient,
-		ZookeeperClient: zkClient,
+		Config:            cfg,
+		PostgresClient:    db,
+		RedisClient:       redisClient,
+		ZookeeperClient:   zkClient,
+		currentCounterVal: 0,
+		uppLimitVal:       0,
 	}, nil
 }
 
@@ -110,7 +112,7 @@ func (s *UrlShortenerService) Start() error {
 		log.Fatalf("failed to automigrate: %v", err)
 		return err
 	}
-	// Create a listener on TCP port 50051
+	//taking a mutex lock
 	lis, err := net.Listen("tcp", ":"+s.Config.GrpcPort)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -172,4 +174,48 @@ func (s *UrlShortenerService) Start() error {
 	log.Println("Serving gRPC-Gateway on :" + s.Config.HttpPort)
 	// Start HTTP server (and proxy calls to gRPC server endpoint)
 	return srv.ListenAndServe()
+}
+
+func (s *UrlShortenerService) requestCounter() (int64, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.currentCounterVal >= s.uppLimitVal {
+		//connect to zk and fetch the current count from zk
+		conn := s.ZookeeperClient
+		if !s.isCounterExists{
+			err := checkZkCounter(conn)
+			if err != nil {
+				log.Fatal("Failed to create Counter")
+				return -1, err
+			}
+			s.isCounterExists = true
+		}
+
+		data, stat, err := conn.Get("/counter")
+		if err != nil {
+			log.Printf("Error getting data from Zookeeper: %v", err)
+			return -1, err
+		}
+		counter, err := strconv.Atoi(string(data))
+		if err != nil {
+			log.Printf("Error converting data from Zookeeper to int: %v", err)
+			return -1, err
+
+		}
+		//increment the zk counter by 10000
+		newCounter := int64(counter + 10000)
+
+		_, err = conn.Set("/counter", []byte(strconv.FormatInt(newCounter, 10)), stat.Version)
+		if err != nil {
+			log.Printf("Error setting data to Zookeeper: %v", err)
+			return -1, err
+
+		}
+		//update the currentCounterVal and uppLimitVal with the updated zk value and zk value plus thousand respectively
+		s.currentCounterVal = int64(counter)
+		s.uppLimitVal = newCounter
+		log.Printf("Updated currentCounterVal to %d and uppLimitVal to %d", s.currentCounterVal, s.uppLimitVal)
+	}
+	s.currentCounterVal += 1
+	return s.currentCounterVal, nil
 }
