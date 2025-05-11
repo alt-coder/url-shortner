@@ -31,7 +31,7 @@ func NewServer() (*UrlShortenerService, error) {
 		PostgresDBName:   os.Getenv(PostgresDBName),
 		RedisHost:        os.Getenv(RedisHost),
 		RedisPort:        os.Getenv(RedisPort),
-		RedisPassword: 	 os.Getenv(RedisPassword),
+		RedisPassword:    os.Getenv(RedisPassword),
 		ZookeeperHost:    os.Getenv(ZookeeperHost),
 		ZookeeperPort:    os.Getenv(ZookeeperPort),
 	}
@@ -63,7 +63,7 @@ func NewServer() (*UrlShortenerService, error) {
 	redisConfig := base.RedisConfig{
 		Addr:     cfg.RedisHost + ":" + cfg.RedisPort,
 		Password: cfg.RedisPassword,
-		DB:       0,  // TODO: Make this configurable
+		DB:       0, // TODO: Make this configurable
 	}
 
 	redisClient, err := base.NewRedisClient(redisConfig)
@@ -227,8 +227,12 @@ func (s *UrlShortenerService) Start() error {
 		return err
 	}
 
+	// Add a handler for /d/{shortChar} to redirect to the full URL
+	r.HandleFunc("/d/{shortChar}", s.redirectHandler)
+
 	// Serve the gRPC gateway
-	r.PathPrefix("/").Handler(gwmux)
+	apiRouter := r.PathPrefix("/").Subrouter()
+	apiRouter.PathPrefix("/").Handler(gwmux)
 
 	// Create HTTP server
 	srv := &http.Server{
@@ -239,6 +243,22 @@ func (s *UrlShortenerService) Start() error {
 	log.Println("Serving gRPC-Gateway on :" + s.Config.HttpPort)
 	// Start HTTP server (and proxy calls to gRPC server endpoint)
 	return srv.ListenAndServe()
+}
+
+func (s *UrlShortenerService) redirectHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	shortChar := vars["shortChar"]
+
+	// Use GetURL to get the full URL
+	getURLRequest := &proto.GetURLRequest{ShortUrl: shortChar}
+	resp, err := s.GetURL(context.Background(), getURLRequest)
+	if err != nil {
+		http.Error(w, "URL not found", http.StatusNotFound)
+		return
+	}
+
+	// Redirect to the full URL
+	http.Redirect(w, r, resp.LongUrl, http.StatusFound)
 }
 
 func (s *UrlShortenerService) requestCounter() (int64, error) {
