@@ -4,6 +4,12 @@ import (
 	proto "github.com/alt-coder/url-shortener/url-shortener/proto"
 )
 
+import (
+	"gorm.io/gorm"
+	"github.com/redis/go-redis/v9"
+	"github.com/go-zookeeper/zk"
+)
+
 type Config struct {
 	GrpcPort         string
 	HttpPort         string
@@ -21,4 +27,7 @@ type Config struct {
 type UrlShortenerService struct {
 	proto.UnimplementedURLShortenerServer
 	Config Config
+	PostgresClient *gorm.DB
+	RedisClient *redis.Client
+	ZookeeperClient *zk.Conn
 }

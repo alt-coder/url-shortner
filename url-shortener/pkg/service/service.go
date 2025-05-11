@@ -6,17 +6,20 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 
+	base "github.com/alt-coder/url-shortener/base/go"
 	proto "github.com/alt-coder/url-shortener/url-shortener/proto"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/reflection"
 
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/reflection"
 )
 
-func NewServer() *UrlShortenerService {
+func NewServer() (*UrlShortenerService, error) {
 	cfg := Config{
 		GrpcPort:         os.Getenv(GrpcPort),
 		HttpPort:         os.Getenv(HttpPort),
@@ -31,15 +34,59 @@ func NewServer() *UrlShortenerService {
 		ZookeeperPort:    os.Getenv(ZookeeperPort),
 	}
 
-	// Initialize PostgreSQL, Redis, and ZooKeeper connections
 	// TODO: Implement actual initialization logic
 	log.Printf("Connecting to PostgreSQL: %s:%s@%s/%s", cfg.PostgresUser, cfg.PostgresPassword, cfg.PostgresHost, cfg.PostgresDBName)
 	log.Printf("Connecting to Redis: %s:%s", cfg.RedisHost, cfg.RedisPort)
 	log.Printf("Connecting to ZooKeeper: %s:%s", cfg.ZookeeperHost, cfg.ZookeeperPort)
+	postgresPort, err := strconv.Atoi(cfg.PostgresPort)
+	if err != nil {
+		log.Fatalf("Could not connect to postgress port %s", cfg.PostgresPort)
+		return nil, err
+	}
+	postgresConfig := base.PostgresConfig{
+		Host:     cfg.PostgresHost,
+		Port:     postgresPort,
+		User:     cfg.PostgresUser,
+		Password: cfg.PostgresPassword,
+		DBName:   cfg.PostgresDBName,
+		SSLMode:  "disable", // TODO: Make this configurable
+	}
+
+	db, err := base.NewPostgresClient(postgresConfig)
+	if err != nil {
+		log.Printf("Error connecting to PostgreSQL: %v", err)
+		return nil, err
+	}
+
+	redisConfig := base.RedisConfig{
+		Addr:     cfg.RedisHost + ":" + cfg.RedisPort,
+		Password: "", // TODO: Make this configurable
+		DB:       0,  // TODO: Make this configurable
+	}
+
+	redisClient, err := base.NewRedisClient(redisConfig)
+	if err != nil {
+		log.Printf("Error connecting to Redis: %v", err)
+		return nil, err
+	}
+
+	zookeeperConfig := base.ZookeeperConfig{
+		Address: []string{cfg.ZookeeperHost + ":" + cfg.ZookeeperPort},
+		Timeout: 5 * time.Second, // TODO: Make this configurable
+	}
+
+	zkClient, err := base.NewZookeeperClient(zookeeperConfig)
+	if err != nil {
+		log.Printf("Error connecting to Zookeeper: %v", err)
+		return nil, err
+	}
 
 	return &UrlShortenerService{
-		Config: cfg,
-	}
+		Config:          cfg,
+		PostgresClient:  db,
+		RedisClient:     redisClient,
+		ZookeeperClient: zkClient,
+	}, nil
 }
 
 func (s *UrlShortenerService) ShortenURL(ctx context.Context, req *proto.ShortenURLRequest) (*proto.ShortenURLResponse, error) {

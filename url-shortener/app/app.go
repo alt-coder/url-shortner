@@ -10,7 +10,11 @@ func main() {
 	// Start the service
 	log.Println("Starting the URL shortener service...")
 
-	srv := service.NewServer()
+	srv, err := service.NewServer()
+
+	if err != nil {
+		log.Fatalf("error occured while creating server %s", err)
+	}
 
 	log.Println("Serving gRPC-Gateway on :8080")
 	log.Fatal(srv.Start())
