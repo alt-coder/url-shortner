@@ -31,6 +31,7 @@ func NewServer() (*UrlShortenerService, error) {
 		PostgresDBName:   os.Getenv(PostgresDBName),
 		RedisHost:        os.Getenv(RedisHost),
 		RedisPort:        os.Getenv(RedisPort),
+		RedisPassword: 	 os.Getenv(RedisPassword),
 		ZookeeperHost:    os.Getenv(ZookeeperHost),
 		ZookeeperPort:    os.Getenv(ZookeeperPort),
 	}
@@ -61,7 +62,7 @@ func NewServer() (*UrlShortenerService, error) {
 
 	redisConfig := base.RedisConfig{
 		Addr:     cfg.RedisHost + ":" + cfg.RedisPort,
-		Password: "", // TODO: Make this configurable
+		Password: cfg.RedisPassword,
 		DB:       0,  // TODO: Make this configurable
 	}
 

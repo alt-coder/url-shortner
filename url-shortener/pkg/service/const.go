@@ -11,6 +11,7 @@ const (
 
 	RedisHost = "REDIS_HOST"
 	RedisPort = "REDIS_PORT"
+	RedisPassword = "REDIS_PASSWORD"
 
 	ZookeeperHost = "ZOOKEEPER_HOST"
 	ZookeeperPort = "ZOOKEEPER_PORT"

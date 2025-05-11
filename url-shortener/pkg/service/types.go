@@ -19,18 +19,19 @@ type Config struct {
 	PostgresDBName   string
 	RedisHost        string
 	RedisPort        string
+	RedisPassword    string
 	ZookeeperHost    string
 	ZookeeperPort    string
 }
 
 type UrlShortenerService struct {
 	proto.UnimplementedURLShortenerServer
-	Config Config
-	RedisClient *redis.Client
-	ZookeeperClient *zk.Conn
+	Config            Config
+	RedisClient       *redis.Client
+	ZookeeperClient   *zk.Conn
 	currentCounterVal int64
-	uppLimitVal int64
-	mu sync.Mutex
-	isCounterExists bool
-	db dataModel.DataAccessLayer
+	uppLimitVal       int64
+	mu                sync.Mutex
+	isCounterExists   bool
+	db                dataModel.DataAccessLayer
 }

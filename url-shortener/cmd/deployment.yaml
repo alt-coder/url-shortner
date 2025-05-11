@@ -17,3 +17,34 @@ spec:
         image: url-shortener
         ports:
         - containerPort: 8080
+        env:
+        - name: GRPC_PORT
+          value: "8081"
+        - name: HTTP_PORT
+          value: "8080"
+        - name: POSTGRES_HOST
+          value: "postgresql"
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgresql
+              key: postgres-password
+        - name: POSTGRES_DBNAME
+          value: "url_shortener"
+        - name: REDIS_HOST
+          value: "redis-master"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: redis
+              key: redis-password
+        - name: ZOOKEEPER_HOST
+          value: "zookeeper"
+        - name: ZOOKEEPER_PORT
+          value: "2181"
