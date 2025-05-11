@@ -8,16 +8,21 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"sync"
 
 	base "github.com/alt-coder/url-shortener/base/go"
 	"github.com/alt-coder/url-shortener/url-shortener/pkg/dataModel"
 	proto "github.com/alt-coder/url-shortener/url-shortener/proto"
-
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
+)
+
+var (
+	// requestCounterFunc will be used for mocking.
+	requestCounterFunc = func(s *UrlShortenerService) (int64, error) {return s.requestCounter()}
 )
 
 func NewServer() (*UrlShortenerService, error) {
@@ -42,7 +47,7 @@ func NewServer() (*UrlShortenerService, error) {
 	log.Printf("Connecting to ZooKeeper: %s:%s", cfg.ZookeeperHost, cfg.ZookeeperPort)
 	postgresPort, err := strconv.Atoi(cfg.PostgresPort)
 	if err != nil {
-		log.Fatalf("Could not connect to postgress port %s", cfg.PostgresPort)
+		log.Printf("Could not connect to postgress port %s", cfg.PostgresPort)
 		return nil, err
 	}
 	postgresConfig := base.PostgresConfig{
@@ -87,10 +92,11 @@ func NewServer() (*UrlShortenerService, error) {
 	return &UrlShortenerService{
 		Config:            cfg,
 		db:                datamodelDB,
-		RedisClient:       redisClient,
-		ZookeeperClient:   zkClient,
+		RedisClient:       redisClient,     // base.NewRedisClient returns *redis.Client which implements RedisClientInterface
+		ZookeeperClient:   zkClient,        // base.NewZookeeperClient returns *zk.Conn which implements ZkClientInterface
 		currentCounterVal: 0,
 		uppLimitVal:       0,
+		mu:                sync.Mutex{}, // Initialize the mutex
 	}, nil
 }
 
@@ -112,7 +118,7 @@ func (s *UrlShortenerService) ShortenURL(ctx context.Context, req *proto.Shorten
 		return nil, ErrInvalidApiKey
 	}
 
-	counter, err := s.requestCounter()
+	counter, err := requestCounterFunc(s)
 	if err != nil {
 		return nil, err
 	}
@@ -270,7 +276,7 @@ func (s *UrlShortenerService) requestCounter() (int64, error) {
 		if !s.isCounterExists {
 			err := checkZkCounter(conn)
 			if err != nil {
-				log.Fatal("Failed to create Counter")
+				log.Print("Failed to create Counter")
 				return -1, err
 			}
 			s.isCounterExists = true

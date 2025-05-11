@@ -8,7 +8,9 @@ import (
 	"github.com/go-zookeeper/zk"
 )
 
-func checkZkCounter(conn *zk.Conn) error {
+// 
+
+func checkZkCounter(conn ZkClientInterface) error {
 	exists, _, err := conn.Exists("/counter")
 	if err != nil {
 		log.Printf("Error checking if /counter exists in Zookeeper: %v", err)
