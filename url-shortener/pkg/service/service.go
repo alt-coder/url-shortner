@@ -85,7 +85,7 @@ func NewServer() (*UrlShortenerService, error) {
 
 	return &UrlShortenerService{
 		Config:            cfg,
-		db:    datamodelDB,
+		db:                datamodelDB,
 		RedisClient:       redisClient,
 		ZookeeperClient:   zkClient,
 		currentCounterVal: 0,
@@ -94,15 +94,50 @@ func NewServer() (*UrlShortenerService, error) {
 }
 
 func (s *UrlShortenerService) ShortenURL(ctx context.Context, req *proto.ShortenURLRequest) (*proto.ShortenURLResponse, error) {
-	// Implement URL shortening logic here
-	// TODO IMPLEMENT LOGIC HERE
-	shortURL := "shortened_url"
+	apiKey := req.ApiKey
+	originalURL := req.LongUrl
+
+	if apiKey == "" {
+		return nil, ErrMissingApiKey
+	}
+
+	//check if api key exists
+	isValidApiKey, err := s.db.CheckAPIKey(apiKey)
+
+	if err != nil {
+		return nil, err
+	}
+	if !isValidApiKey {
+		return nil, ErrInvalidApiKey
+	}
+
+	counter, err := s.requestCounter()
+	if err != nil {
+		return nil, err
+	}
+
+	shortURL := base62Encode(counter)
+
+	urlMapping := &dataModel.URLMapping{
+		ShortURLID: shortURL,
+		LongURL:  originalURL,
+	}
+
+	if err := s.db.CreateURLMapping(urlMapping); err != nil {
+		return nil, err
+	}
+
 	return &proto.ShortenURLResponse{ShortUrl: shortURL}, nil
 }
 
 func (s *UrlShortenerService) GetURL(ctx context.Context, req *proto.GetURLRequest) (*proto.GetURLResponse, error) {
-	// TODO : IMPLEMENT lOGIC HERE
-	longURL := "original_url"
+	shortURL := req.ShortUrl
+
+	longURL, err := s.db.GetLongURL(shortURL)
+	if err != nil {
+		return nil, err
+	}
+
 	return &proto.GetURLResponse{LongUrl: longURL}, nil
 }
 
@@ -159,7 +194,7 @@ func (s *UrlShortenerService) Start() error {
 	gwmux := runtime.NewServeMux()
 	err = proto.RegisterURLShortenerHandler(context.Background(), gwmux, conn)
 	if err != nil {
-		log.Fatalf("Failed to register gateway:", err)
+		log.Fatalf("Failed to register gateway:%v", err)
 		return err
 	}
 
@@ -183,7 +218,7 @@ func (s *UrlShortenerService) requestCounter() (int64, error) {
 	if s.currentCounterVal >= s.uppLimitVal {
 		//connect to zk and fetch the current count from zk
 		conn := s.ZookeeperClient
-		if !s.isCounterExists{
+		if !s.isCounterExists {
 			err := checkZkCounter(conn)
 			if err != nil {
 				log.Fatal("Failed to create Counter")

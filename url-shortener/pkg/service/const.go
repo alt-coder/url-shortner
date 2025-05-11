@@ -1,5 +1,7 @@
 package service
 
+import "errors"
+
 const (
 	PostgresHost     = "POSTGRES_HOST"
 	PostgresPort     = "POSTGRES_PORT"
@@ -15,4 +17,9 @@ const (
 
 	GrpcPort = "GRPC_PORT"
 	HttpPort = "HTTP_PORT"
+)
+
+var (
+	ErrMissingApiKey = errors.New("missing API key")
+	ErrInvalidApiKey = errors.New("invalid API key")
 )
