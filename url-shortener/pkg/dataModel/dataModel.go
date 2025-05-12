@@ -11,7 +11,7 @@ import (
 type URLMapping struct {
 	gorm.Model
 	ShortURLID string `gorm:"uniqueIndex"`
-	LongURL    string
+	LongURL    string `gorm:"uniqueIndex"`
 }
 
 // User represents a user in the system.
@@ -103,5 +103,9 @@ func (db *DB) CheckAPIKey(apiKey string) (bool, error) {
 }
 
 func (db *DB) AutoMigrate(dst ...interface{}) error {
+	if err := db.DB.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"").Error; err != nil {
+		log.Printf("failed to create uuid-ossp extension: %v", err)
+		return err
+	}
 	return db.DB.AutoMigrate(dst...)
 }
