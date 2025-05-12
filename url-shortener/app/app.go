@@ -10,7 +10,7 @@ func main() {
 	// Start the service
 	log.Println("Starting the URL shortener service...")
 
-	srv, err := service.NewServer()
+	srv, err := service.NewUrlShortnerService()
 
 	if err != nil {
 		log.Fatalf("error occured while creating server %s", err)

@@ -39,13 +39,12 @@ func TestNewServer(t *testing.T) {
 	os.Setenv(RedisPassword, "")
 	os.Setenv(ZookeeperHost, "localhost")
 	os.Setenv(ZookeeperPort, "2181")
-	
 
 	t.Run("Invalid Postgres Port", func(t *testing.T) {
 		originalPort := os.Getenv(PostgresPort)
 		os.Setenv(PostgresPort, "invalid")
 		defer os.Setenv(PostgresPort, originalPort)
-		_, err := NewServer() // NewServer uses base.New... clients
+		_, err := NewUrlShortnerService() // NewServer uses base.New... clients
 		assert.Error(t, err, "Expected error for invalid port")
 	})
 }
@@ -54,13 +53,12 @@ func TestShortenURL(t *testing.T) {
 	mockDb := new(MockDB)
 	mockZk := new(MockZookeeperClient)
 
-
 	s := &UrlShortenerService{
 		Config: Config{GrpcPort: "50051", HttpPort: "8080"},
 		db:     mockDb,
-	
+
 		ZookeeperClient: mockZk, // This line makes the test work IF service uses interface
-		RedisClient:     nil,    
+		RedisClient:     nil,
 		mu:              sync.Mutex{},
 	}
 
@@ -81,7 +79,6 @@ func TestShortenURL(t *testing.T) {
 		requestCounterFunc = func(s *UrlShortenerService) (int64, error) {
 			return 12345, nil
 		}
-		
 
 		resp, err := s.ShortenURL(ctx, req)
 		assert.NoError(t, err)
@@ -160,7 +157,7 @@ func TestShortenURL(t *testing.T) {
 		}
 		resp, err := s.ShortenURL(ctx, req)
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "zookeeper Exist error") 
+		assert.Contains(t, err.Error(), "zookeeper Exist error")
 		assert.Nil(t, resp)
 
 		mockDb.AssertExpectations(t)
@@ -462,4 +459,3 @@ func TestRequestCounter(t *testing.T) {
 		mockZk.AssertExpectations(t)
 	})
 }
-
