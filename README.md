@@ -167,6 +167,39 @@ The URL shortener service exposes the following API endpoints:
   }
   ```
 
+### Get Top Shortened Domains (Metrics)
+
+* Endpoint: `GET /metrics/top_domains`
+
+* Description: Returns the top 3 domain names that have been shortened the most number of times.
+
+* Curl Command:
+  
+  ```bash
+  curl http://localhost:8081/metrics/top_domains
+  ```
+
+* Response:
+  
+  ```json
+  {
+    "top_domains": [
+      {
+        "domain": "udemy.com",
+        "count": "6"
+      },
+      {
+        "domain": "youtube.com",
+        "count": "4"
+      },
+      {
+        "domain": "wikipedia.com",
+        "count": "2"
+      }
+    ]
+  }
+  ```
+
 ### Fetch API Key
 
 * Endpoint: `GET /api_key/{email}`

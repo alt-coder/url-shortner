@@ -406,6 +406,138 @@ func (x *FetchApiKeyResponse) GetApiKey() string {
 	return ""
 }
 
+type DomainMetric struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Domain        string                 `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
+	Count         int64                  `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DomainMetric) Reset() {
+	*x = DomainMetric{}
+	mi := &file_url_shortener_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DomainMetric) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DomainMetric) ProtoMessage() {}
+
+func (x *DomainMetric) ProtoReflect() protoreflect.Message {
+	mi := &file_url_shortener_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DomainMetric.ProtoReflect.Descriptor instead.
+func (*DomainMetric) Descriptor() ([]byte, []int) {
+	return file_url_shortener_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *DomainMetric) GetDomain() string {
+	if x != nil {
+		return x.Domain
+	}
+	return ""
+}
+
+func (x *DomainMetric) GetCount() int64 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+type GetTopDomainsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTopDomainsRequest) Reset() {
+	*x = GetTopDomainsRequest{}
+	mi := &file_url_shortener_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTopDomainsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTopDomainsRequest) ProtoMessage() {}
+
+func (x *GetTopDomainsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_url_shortener_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTopDomainsRequest.ProtoReflect.Descriptor instead.
+func (*GetTopDomainsRequest) Descriptor() ([]byte, []int) {
+	return file_url_shortener_proto_rawDescGZIP(), []int{9}
+}
+
+type GetTopDomainsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TopDomains    []*DomainMetric        `protobuf:"bytes,1,rep,name=top_domains,json=topDomains,proto3" json:"top_domains,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTopDomainsResponse) Reset() {
+	*x = GetTopDomainsResponse{}
+	mi := &file_url_shortener_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTopDomainsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTopDomainsResponse) ProtoMessage() {}
+
+func (x *GetTopDomainsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_url_shortener_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTopDomainsResponse.ProtoReflect.Descriptor instead.
+func (*GetTopDomainsResponse) Descriptor() ([]byte, []int) {
+	return file_url_shortener_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *GetTopDomainsResponse) GetTopDomains() []*DomainMetric {
+	if x != nil {
+		return x.TopDomains
+	}
+	return nil
+}
+
 var File_url_shortener_proto protoreflect.FileDescriptor
 
 const file_url_shortener_proto_rawDesc = "" +
@@ -431,14 +563,22 @@ const file_url_shortener_proto_rawDesc = "" +
 	"\x12FetchApiKeyRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\".\n" +
 	"\x13FetchApiKeyResponse\x12\x17\n" +
-	"\aapi_key\x18\x01 \x01(\tR\x06apiKey2\xa9\x03\n" +
+	"\aapi_key\x18\x01 \x01(\tR\x06apiKey\"<\n" +
+	"\fDomainMetric\x12\x16\n" +
+	"\x06domain\x18\x01 \x01(\tR\x06domain\x12\x14\n" +
+	"\x05count\x18\x02 \x01(\x03R\x05count\"\x16\n" +
+	"\x14GetTopDomainsRequest\"U\n" +
+	"\x15GetTopDomainsResponse\x12<\n" +
+	"\vtop_domains\x18\x01 \x03(\v2\x1b.url_shortener.DomainMetricR\n" +
+	"topDomains2\xa3\x04\n" +
 	"\fURLShortener\x12f\n" +
 	"\n" +
 	"ShortenURL\x12 .url_shortener.ShortenURLRequest\x1a!.url_shortener.ShortenURLResponse\"\x13\x82\xd3\xe4\x93\x02\r:\x01*\"\b/shorten\x12[\n" +
 	"\x06GetURL\x12\x1c.url_shortener.GetURLRequest\x1a\x1d.url_shortener.GetURLResponse\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/{short_url}\x12d\n" +
 	"\n" +
 	"CreateUser\x12 .url_shortener.CreateUserRequest\x1a!.url_shortener.CreateUserResponse\"\x11\x82\xd3\xe4\x93\x02\v:\x01*\"\x06/users\x12n\n" +
-	"\vFetchApiKey\x12!.url_shortener.FetchApiKeyRequest\x1a\".url_shortener.FetchApiKeyResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/api_key/{email}B7Z5github.com/alt-coder/url-shortner/url-shortener/protob\x06proto3"
+	"\vFetchApiKey\x12!.url_shortener.FetchApiKeyRequest\x1a\".url_shortener.FetchApiKeyResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/api_key/{email}\x12x\n" +
+	"\rGetTopDomains\x12#.url_shortener.GetTopDomainsRequest\x1a$.url_shortener.GetTopDomainsResponse\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/metrics/top_domainsB7Z5github.com/alt-coder/url-shortner/url-shortener/protob\x06proto3"
 
 var (
 	file_url_shortener_proto_rawDescOnce sync.Once
@@ -452,31 +592,37 @@ func file_url_shortener_proto_rawDescGZIP() []byte {
 	return file_url_shortener_proto_rawDescData
 }
 
-var file_url_shortener_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_url_shortener_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_url_shortener_proto_goTypes = []any{
-	(*ShortenURLRequest)(nil),   // 0: url_shortener.ShortenURLRequest
-	(*ShortenURLResponse)(nil),  // 1: url_shortener.ShortenURLResponse
-	(*GetURLRequest)(nil),       // 2: url_shortener.GetURLRequest
-	(*GetURLResponse)(nil),      // 3: url_shortener.GetURLResponse
-	(*CreateUserRequest)(nil),   // 4: url_shortener.CreateUserRequest
-	(*CreateUserResponse)(nil),  // 5: url_shortener.CreateUserResponse
-	(*FetchApiKeyRequest)(nil),  // 6: url_shortener.FetchApiKeyRequest
-	(*FetchApiKeyResponse)(nil), // 7: url_shortener.FetchApiKeyResponse
+	(*ShortenURLRequest)(nil),     // 0: url_shortener.ShortenURLRequest
+	(*ShortenURLResponse)(nil),    // 1: url_shortener.ShortenURLResponse
+	(*GetURLRequest)(nil),         // 2: url_shortener.GetURLRequest
+	(*GetURLResponse)(nil),        // 3: url_shortener.GetURLResponse
+	(*CreateUserRequest)(nil),     // 4: url_shortener.CreateUserRequest
+	(*CreateUserResponse)(nil),    // 5: url_shortener.CreateUserResponse
+	(*FetchApiKeyRequest)(nil),    // 6: url_shortener.FetchApiKeyRequest
+	(*FetchApiKeyResponse)(nil),   // 7: url_shortener.FetchApiKeyResponse
+	(*DomainMetric)(nil),          // 8: url_shortener.DomainMetric
+	(*GetTopDomainsRequest)(nil),  // 9: url_shortener.GetTopDomainsRequest
+	(*GetTopDomainsResponse)(nil), // 10: url_shortener.GetTopDomainsResponse
 }
 var file_url_shortener_proto_depIdxs = []int32{
-	0, // 0: url_shortener.URLShortener.ShortenURL:input_type -> url_shortener.ShortenURLRequest
-	2, // 1: url_shortener.URLShortener.GetURL:input_type -> url_shortener.GetURLRequest
-	4, // 2: url_shortener.URLShortener.CreateUser:input_type -> url_shortener.CreateUserRequest
-	6, // 3: url_shortener.URLShortener.FetchApiKey:input_type -> url_shortener.FetchApiKeyRequest
-	1, // 4: url_shortener.URLShortener.ShortenURL:output_type -> url_shortener.ShortenURLResponse
-	3, // 5: url_shortener.URLShortener.GetURL:output_type -> url_shortener.GetURLResponse
-	5, // 6: url_shortener.URLShortener.CreateUser:output_type -> url_shortener.CreateUserResponse
-	7, // 7: url_shortener.URLShortener.FetchApiKey:output_type -> url_shortener.FetchApiKeyResponse
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	8,  // 0: url_shortener.GetTopDomainsResponse.top_domains:type_name -> url_shortener.DomainMetric
+	0,  // 1: url_shortener.URLShortener.ShortenURL:input_type -> url_shortener.ShortenURLRequest
+	2,  // 2: url_shortener.URLShortener.GetURL:input_type -> url_shortener.GetURLRequest
+	4,  // 3: url_shortener.URLShortener.CreateUser:input_type -> url_shortener.CreateUserRequest
+	6,  // 4: url_shortener.URLShortener.FetchApiKey:input_type -> url_shortener.FetchApiKeyRequest
+	9,  // 5: url_shortener.URLShortener.GetTopDomains:input_type -> url_shortener.GetTopDomainsRequest
+	1,  // 6: url_shortener.URLShortener.ShortenURL:output_type -> url_shortener.ShortenURLResponse
+	3,  // 7: url_shortener.URLShortener.GetURL:output_type -> url_shortener.GetURLResponse
+	5,  // 8: url_shortener.URLShortener.CreateUser:output_type -> url_shortener.CreateUserResponse
+	7,  // 9: url_shortener.URLShortener.FetchApiKey:output_type -> url_shortener.FetchApiKeyResponse
+	10, // 10: url_shortener.URLShortener.GetTopDomains:output_type -> url_shortener.GetTopDomainsResponse
+	6,  // [6:11] is the sub-list for method output_type
+	1,  // [1:6] is the sub-list for method input_type
+	1,  // [1:1] is the sub-list for extension type_name
+	1,  // [1:1] is the sub-list for extension extendee
+	0,  // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_url_shortener_proto_init() }
@@ -490,7 +636,7 @@ func file_url_shortener_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_url_shortener_proto_rawDesc), len(file_url_shortener_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

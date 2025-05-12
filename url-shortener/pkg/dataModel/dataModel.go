@@ -2,6 +2,8 @@ package dataModel
 
 import (
 	"log"
+	"net/url" 
+	"fmt"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -12,6 +14,7 @@ type URLMapping struct {
 	gorm.Model
 	ShortURLID string `gorm:"uniqueIndex"`
 	LongURL    string `gorm:"uniqueIndex"`
+	DomainName string `gorm:"index"` // Added for metrics
 }
 
 // User represents a user in the system.
@@ -23,6 +26,12 @@ type User struct {
 	APIKey    uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
 }
 
+// DomainCount holds the domain name and its count.
+type DomainCount struct {
+	DomainName string
+	Count      int64
+}
+
 // DataAccessLayer defines the interface for accessing data.
 type DataAccessLayer interface {
 	CreateURLMapping(mapping *URLMapping) error
@@ -31,6 +40,7 @@ type DataAccessLayer interface {
 	GetUserByEmail(email string) (*User, error)
 	GetAPIKeyByEmail(email string) (string, error)
 	CheckAPIKey(apiKey string) (bool, error)
+	GetTopDomains(limit int) ([]DomainCount, error) // Added for metrics
 	AutoMigrate(dst ...interface{}) error
 }
 
@@ -46,6 +56,18 @@ func NewDB(db *gorm.DB) *DB {
 
 // CreateURLMapping creates a new URL mapping in the database.
 func (db *DB) CreateURLMapping(mapping *URLMapping) error {
+	// Parse domain from LongURL
+	parsedURL, err := url.Parse(mapping.LongURL)
+	if err != nil {
+		log.Printf("Error parsing LongURL %s: %v", mapping.LongURL, err)
+		return fmt.Errorf("invalid Url as parsing failed")
+	} else {
+		mapping.DomainName = parsedURL.Hostname()
+		// Ensure DomainName is "" if Hostname() returns empty (e.g. for file URLs)
+		if mapping.DomainName == "" {
+			log.Printf("Parsed URL %s resulted in an empty hostname.", mapping.LongURL)
+		}
+	}
 	return db.Create(mapping).Error
 }
 
@@ -108,4 +130,20 @@ func (db *DB) AutoMigrate(dst ...interface{}) error {
 		return err
 	}
 	return db.DB.AutoMigrate(dst...)
+}
+
+// GetTopDomains retrieves the top N domains with the most shortened URLs.
+func (db *DB) GetTopDomains(limit int) ([]DomainCount, error) {
+	var results []DomainCount
+	err := db.Model(&URLMapping{}).
+		Select("domain_name, count(*) as count").
+		Where("domain_name IS NOT NULL AND domain_name != ''"). // Ensure domain_name is not empty or null
+		Group("domain_name").
+		Order("count desc").
+		Limit(limit).
+		Scan(&results).Error
+	if err != nil {
+		return nil, err
+	}
+	return results, nil
 }

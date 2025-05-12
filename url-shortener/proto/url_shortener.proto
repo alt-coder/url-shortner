@@ -29,6 +29,11 @@ service URLShortener {
       get: "/api_key/{email}"
     };
   }
+  rpc GetTopDomains (GetTopDomainsRequest) returns (GetTopDomainsResponse) {
+    option (google.api.http) = {
+      get: "/metrics/top_domains"
+    };
+  }
 }
 
 message ShortenURLRequest {
@@ -65,4 +70,15 @@ message FetchApiKeyRequest {
 
 message FetchApiKeyResponse {
   string api_key = 1;
+}
+
+message DomainMetric {
+  string domain = 1;
+  int64 count = 2;
+}
+
+message GetTopDomainsRequest {}
+
+message GetTopDomainsResponse {
+  repeated DomainMetric top_domains = 1;
 }

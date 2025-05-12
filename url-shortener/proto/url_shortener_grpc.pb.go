@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	URLShortener_ShortenURL_FullMethodName  = "/url_shortener.URLShortener/ShortenURL"
-	URLShortener_GetURL_FullMethodName      = "/url_shortener.URLShortener/GetURL"
-	URLShortener_CreateUser_FullMethodName  = "/url_shortener.URLShortener/CreateUser"
-	URLShortener_FetchApiKey_FullMethodName = "/url_shortener.URLShortener/FetchApiKey"
+	URLShortener_ShortenURL_FullMethodName    = "/url_shortener.URLShortener/ShortenURL"
+	URLShortener_GetURL_FullMethodName        = "/url_shortener.URLShortener/GetURL"
+	URLShortener_CreateUser_FullMethodName    = "/url_shortener.URLShortener/CreateUser"
+	URLShortener_FetchApiKey_FullMethodName   = "/url_shortener.URLShortener/FetchApiKey"
+	URLShortener_GetTopDomains_FullMethodName = "/url_shortener.URLShortener/GetTopDomains"
 )
 
 // URLShortenerClient is the client API for URLShortener service.
@@ -33,6 +34,7 @@ type URLShortenerClient interface {
 	GetURL(ctx context.Context, in *GetURLRequest, opts ...grpc.CallOption) (*GetURLResponse, error)
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	FetchApiKey(ctx context.Context, in *FetchApiKeyRequest, opts ...grpc.CallOption) (*FetchApiKeyResponse, error)
+	GetTopDomains(ctx context.Context, in *GetTopDomainsRequest, opts ...grpc.CallOption) (*GetTopDomainsResponse, error)
 }
 
 type uRLShortenerClient struct {
@@ -83,6 +85,16 @@ func (c *uRLShortenerClient) FetchApiKey(ctx context.Context, in *FetchApiKeyReq
 	return out, nil
 }
 
+func (c *uRLShortenerClient) GetTopDomains(ctx context.Context, in *GetTopDomainsRequest, opts ...grpc.CallOption) (*GetTopDomainsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTopDomainsResponse)
+	err := c.cc.Invoke(ctx, URLShortener_GetTopDomains_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // URLShortenerServer is the server API for URLShortener service.
 // All implementations must embed UnimplementedURLShortenerServer
 // for forward compatibility.
@@ -91,6 +103,7 @@ type URLShortenerServer interface {
 	GetURL(context.Context, *GetURLRequest) (*GetURLResponse, error)
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	FetchApiKey(context.Context, *FetchApiKeyRequest) (*FetchApiKeyResponse, error)
+	GetTopDomains(context.Context, *GetTopDomainsRequest) (*GetTopDomainsResponse, error)
 	mustEmbedUnimplementedURLShortenerServer()
 }
 
@@ -112,6 +125,9 @@ func (UnimplementedURLShortenerServer) CreateUser(context.Context, *CreateUserRe
 }
 func (UnimplementedURLShortenerServer) FetchApiKey(context.Context, *FetchApiKeyRequest) (*FetchApiKeyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FetchApiKey not implemented")
+}
+func (UnimplementedURLShortenerServer) GetTopDomains(context.Context, *GetTopDomainsRequest) (*GetTopDomainsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTopDomains not implemented")
 }
 func (UnimplementedURLShortenerServer) mustEmbedUnimplementedURLShortenerServer() {}
 func (UnimplementedURLShortenerServer) testEmbeddedByValue()                      {}
@@ -206,6 +222,24 @@ func _URLShortener_FetchApiKey_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _URLShortener_GetTopDomains_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTopDomainsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(URLShortenerServer).GetTopDomains(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: URLShortener_GetTopDomains_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(URLShortenerServer).GetTopDomains(ctx, req.(*GetTopDomainsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // URLShortener_ServiceDesc is the grpc.ServiceDesc for URLShortener service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +262,10 @@ var URLShortener_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FetchApiKey",
 			Handler:    _URLShortener_FetchApiKey_Handler,
+		},
+		{
+			MethodName: "GetTopDomains",
+			Handler:    _URLShortener_GetTopDomains_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

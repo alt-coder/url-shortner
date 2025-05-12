@@ -190,6 +190,27 @@ func (s *UrlShortenerService) FetchApiKey(ctx context.Context, req *proto.FetchA
 	}, nil
 }
 
+// GetTopDomains retrieves the top 3 domains that have been shortened the most.
+func (s *UrlShortenerService) GetTopDomains(ctx context.Context, req *proto.GetTopDomainsRequest) (*proto.GetTopDomainsResponse, error) {
+	// Fetch top 3 domains from the database
+	domainCounts, err := s.db.GetTopDomains(3)
+	if err != nil {
+		log.Printf("Error fetching top domains: %v", err)
+		return nil, err
+	}
+
+	// Convert dataModel.DomainCount to proto.DomainMetric
+	var protoDomainMetrics []*proto.DomainMetric
+	for _, dc := range domainCounts {
+		protoDomainMetrics = append(protoDomainMetrics, &proto.DomainMetric{
+			Domain: dc.DomainName,
+			Count:  dc.Count,
+		})
+	}
+
+	return &proto.GetTopDomainsResponse{TopDomains: protoDomainMetrics}, nil
+}
+
 // Start initializes and starts the URL shortener service.
 // It performs database auto-migration, starts the gRPC server,
 // and sets up the HTTP gateway (proxy) to handle RESTful API calls.

@@ -17,6 +17,7 @@ type MockDB struct {
 // Ensure MockDB implements dataModel.DataAccessLayer
 var _ dataModel.DataAccessLayer = (*MockDB)(nil)
 
+
 func (m *MockDB) AutoMigrate(dst ...interface{}) error {
 	args := m.Called(dst)
 	return args.Error(0)
@@ -57,4 +58,9 @@ func (m *MockDB) GetAPIKeyByEmail(email string) (string, error) {
 func (m *MockDB) CheckAPIKey(apiKey string) (bool, error) {
 	args := m.Called(apiKey)
 	return args.Bool(0), args.Error(1)
+}
+
+func (m* MockDB) GetTopDomains(limit int) ([]dataModel.DomainCount, error){
+	args := m.Called(limit)
+	return args.Get(0).([]dataModel.DomainCount), args.Error(1)
 }
