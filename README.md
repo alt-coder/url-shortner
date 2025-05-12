@@ -68,7 +68,9 @@ The script will install necessary components for the project like kubectl, postg
 
 ## Running the Application
 
-The application is automatically built and deployed to a Kind cluster using Skaffold.
+The application is automatically built and deployed to a Kind cluster using Skaffold. If it is to be used locally then have a look at linux.sh file in `url-shortener\cmd` to build the go binary, But you will require certain env varible to be set. Which are mention in the file `url-shortener\cmd\deployment.yaml`. 
+
+I would recommend to spin a fresh linux VM and run the setup scripts. If you already have postgress, redis and zookeeper then you can simply deploy in your kubernetes cluster just use this docker image `https://hub.docker.com/r/shubhamsonikgp/url-shortener` but make sure to update the environment variable as per your cluster configuration. 
 
 ### Using Skaffold
 
